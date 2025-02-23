@@ -6,6 +6,7 @@ from api.models import *
 
 class UserAdmin(admin.ModelAdmin):
 
-    search_fields = ("email",)
+    search_fields = ("email",) 
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Role)

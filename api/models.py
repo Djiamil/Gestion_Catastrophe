@@ -2,6 +2,8 @@ import uuid
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from safedelete.models import SafeDeleteModel
+from django.contrib.auth.hashers import make_password
+
 
 
 class CustomUserManager(BaseUserManager):
@@ -28,6 +30,7 @@ class Role(models.Model):
 # Le medel user pour ajouter les utilisateur et la connexion se base sur cette model
 class User(AbstractBaseUser, PermissionsMixin, SafeDeleteModel):
     slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    password = models.CharField(max_length=255)
     email = models.EmailField(unique=True, verbose_name="Adresse Email")
     nom = models.CharField(max_length=30, blank=True, null=True, verbose_name="Nom")
     prenom = models.CharField(max_length=30, blank=True, null=True, verbose_name="Prénom")
