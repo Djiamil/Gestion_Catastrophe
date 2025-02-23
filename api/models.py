@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from safedelete.models import SafeDeleteModel
 
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -48,7 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin, SafeDeleteModel):
         verbose_name_plural = "Utilisateurs"
 
     def __str__(self):
-        return self.email
+        return self.nom or self.email or "Utilisateur sans nom"
 
     def get_full_name(self):
         """Retourne le nom complet de l'utilisateur"""
@@ -57,7 +58,3 @@ class User(AbstractBaseUser, PermissionsMixin, SafeDeleteModel):
     def get_short_name(self):
         """Retourne le prénom de l'utilisateur"""
         return self.prenom or self.email
-
-
-    def __str__(self):
-        return self.name
