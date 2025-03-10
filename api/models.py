@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from safedelete.models import SafeDeleteModel
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
+
 
 
 
@@ -61,3 +63,147 @@ class User(AbstractBaseUser, PermissionsMixin, SafeDeleteModel):
     def get_short_name(self):
         """Retourne le prénom de l'utilisateur"""
         return self.prenom or self.email
+
+
+
+# Model pour enregistre les region 
+class Region(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=30, unique=True)
+    code_iso = models.CharField(max_length=30, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.libelle
+
+
+# Model pour enregistre les Departement
+class Departement(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=50)
+    code_iso = models.CharField(max_length=30)
+    region = models.ForeignKey(Region,on_delete=models.SET_NULL,null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.libelle
+
+
+# Model pour enregistres les commune
+class Commune(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=50)
+    code_iso = models.CharField(max_length=30)
+    departement = models.ForeignKey(Departement, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.libelle
+
+
+# Model pour enregistre les unité de mesure
+class UniteMesure(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=30, unique=True)
+    symbole = models.CharField(max_length=30, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return self.libelle
+
+# Model pour enregistres les periode 
+class Periode(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=255)
+    annee = models.DateField(default=timezone.now) 
+    date_debut = models.DateTimeField(auto_now_add=True)
+    date_fin = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.libelle} ({self.annee})"
+    
+
+# Model pour enregistre les bailleur qui sont des organisme de fiancement comme fonjip ...
+class Bailleur(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    code_bailleur = models.CharField(max_length=50, unique=True)
+    nom = models.CharField(max_length=255)
+    logo = models.ImageField(upload_to="bailleurs/logos/", blank=True, null=True)
+    sigle = models.CharField(max_length=50, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    def __str__(self):
+        return f"{self.nom} ({self.code_bailleur})"
+
+
+
+# Model pour enregistre nos Type d'indicateur
+class TypeDindicateur(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+    def __str__(self):
+        return self.libelle
+    
+    
+# Model pour nous permetre d'enregistre nos indicateur
+class Indicateur(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True, null=True)
+    formule_calcul = models.CharField(max_length=255)  # Stocke la formule en texte simple
+    type_indicateur = models.ForeignKey(TypeDindicateur, on_delete=models.SET_NULL, null=True, blank=True)
+    unite_mesure = models.ForeignKey(UniteMesure, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    def __str__(self):
+        return self.libelle
+
+# Ajoue du model programmes pour ajouter les programmes
+class Programme(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=255, unique=True)
+    bailleur = models.ForeignKey(Bailleur, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    cout_programme = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    
+    date_debut = models.DateTimeField(auto_now_add=True)
+    date_fin = models.DateTimeField(null=True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    def __str__(self):
+        return self.libelle
+# Ce model vas permetre de lier un programme a un indicateur avec la possiblité d'un many to many
+class ProgrammeIndicateur(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+
+    indicateur = models.ForeignKey('Indicateur', on_delete=models.CASCADE, null=False)
+    programme = models.ForeignKey('Programme', on_delete=models.CASCADE, null=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['programme', 'indicateur'], name='unique_programme_indicateur')
+        ]
+
+    def __str__(self):
+        return f"{self.programme} - {self.indicateur}"
+
+
+    
+
+    
+
+
+
+    

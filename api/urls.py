@@ -1,5 +1,15 @@
 from django.urls import path
 from api.views import *
+from api.referenciel.region import *
+from api.referenciel.departement import *
+from api.referenciel.Commune import *
+from api.referenciel.uniteMesure import *
+from api.referenciel.Periode import *
+from api.referenciel.Bailleur import *
+from api.referenciel.typeIndicateur import *
+from api.referenciel.indicateur import *
+from api.referenciel.programme import *
+from api.referenciel.configuireIndicateur import *
 
 urlpatterns = [
     # Debu des endPointe des fonction qui sont dans views 
@@ -7,6 +17,47 @@ urlpatterns = [
     path('role_create/', AddRole.as_view(), name='create_role'),
     path('user_create/', AddUser.as_view(), name='create_user'),
     # Fin des endpoint qui sont dans views
+    
+    # DEBUT Url qui ourne au toure des region
+    path('region_create_or_liste/', RegionCreateOrListe.as_view(), name='region_create_or_liste'),
+    path('region_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteRegion.as_view(), name='region_getOn_update_delete'),
+    # FIN url qui tourne au toure des region  
+    # Debut route qui tourne au toure du departement 
+    path('departement_create_or_liste/', DepartementCreateOrListe.as_view(), name='departement_create_or_liste'),
+    path('departement_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteDepartement.as_view(), name='departement_getOn_update_delete'),
+    # Fin des route qui tourne autoure du departement
+    # Deut des routes qui tourne au toure de la commune
+    path('commune_create_or_liste/', CommuneCreateOrListe.as_view(), name='commune_create_or_liste'),
+    path('commune_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteCommune.as_view(), name='commune_getOn_update_delete'),
+    # Fin des routes qui tourne au toure de la commune
+    # Debut des route pour les unité de mesure
+    path('uniteMesure_create_or_liste/', UniteMesureCreateOrListe.as_view(), name='uniteMesure_create_or_liste'),
+    path('uniteMesure_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteUniteMesure.as_view(), name='uniteMesure_getOn_update_delete'),
+    # Fin des url pour les unité de esure
+    # Debut des route pour la periode
+    path('periode_create_or_liste/', PeriodeCreateOrListe.as_view(), name='periode_create_or_liste'),
+    path('periode_getOn_update_delete/<slug:slug>/', GetUpdateOrDeletePeriode.as_view(), name='periode_getOn_update_delete'),
+    # Fin des route pour la periode
+    # Debut des url pour les bailleur
+    path('bailleur_create_or_liste/', BailleurCreateOrListe.as_view(), name='bailleur_create_or_liste'),
+    path('bailleur_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteBailleur.as_view(), name='bailleur_getOn_update_delete'),
+    # Fin des url pour les bailler
+    # Debut des endpoint pour les type d'indicateur 
+    path('typeIndicateur_create_or_liste/', TypeDindicateurCreateOrListe.as_view(), name='typeIndicateur_create_or_liste'),
+    path('typeIndicateur_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteTypeDindicateur.as_view(), name='typeIndicateur_getOn_update_delete'),
+    # Fin des endpoint pour les type indicateur
+    # Debut des endPoint pour les indicateur
+    path('indicateur_create_or_liste/', IndicateurCreateOrListe.as_view(), name='typeIndicateur_create_or_liste'),
+    path('indicateur_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteIndicateur.as_view(), name='typeIndicateur_getOn_update_delete'),
+    # Fin des endpoint pour les indicateur
+    # debu des route pour programme
+    path('programme_create_or_liste/', ProgrammeCreateOrListe.as_view(), name='programme_create_or_liste'),
+    path('programme_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteProgramme.as_view(), name='programme_getOn_update_delete'),
+    # fin des route pour programme
+    # Les endPoint qui tourne au tour du programme et de l'indicateur
+    path('affect_programme_indicateur/', ProgrammeIndicateurCreateOrListe.as_view(), name='affecte_programme_indicateur'),
+    path('configuire_programme_indicateur/<slug:slug>/', GetUpdateOrDeleteProgrammeIndicateur.as_view(), name='affecte_programme_indicateur'),
+    # fin es endPoint pour affecter un programme a un indicateur
 ]
 
 # Username superuser: Djiamil

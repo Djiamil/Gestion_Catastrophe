@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # pour contourner les cors
+    'corsheaders',
     # Installation du rest framework avec drf
     'rest_framework',
     # le jwt pour la generation de token 
@@ -72,6 +74,7 @@ SIMPLE_JWT = {
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -139,7 +142,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+]
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
