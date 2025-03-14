@@ -10,6 +10,9 @@ from api.referenciel.typeIndicateur import *
 from api.referenciel.indicateur import *
 from api.referenciel.programme import *
 from api.referenciel.configuireIndicateur import *
+from api.referenciel.composante import *
+from api.referenciel.sousComposante import *
+from api.referenciel.projet import *
 
 urlpatterns = [
     # Debu des endPointe des fonction qui sont dans views 
@@ -58,6 +61,18 @@ urlpatterns = [
     path('affect_programme_indicateur/', ProgrammeIndicateurCreateOrListe.as_view(), name='affecte_programme_indicateur'),
     path('configuire_programme_indicateur/<slug:slug>/', GetUpdateOrDeleteProgrammeIndicateur.as_view(), name='affecte_programme_indicateur'),
     # fin es endPoint pour affecter un programme a un indicateur
+    # debut des url pour les composante
+    path('composante_create_or_liste/', ComposanteCreateOrListe.as_view(), name='affecte_programme_indicateur'),
+    path('composante_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteComposante.as_view(), name='affecte_programme_indicateur'),
+    # fin des url pour les composante
+     # debut des url pour les souscomposante
+    path('sous_composante_create_or_liste/', SousComposanteCreateOrListe.as_view(), name='affecte_programme_indicateur'),
+    path('sous_composante_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteSousComposante.as_view(), name='affecte_programme_indicateur'),
+    # fin des url pour les ouscomposante
+    # debut des url pour les souscomposante
+    path('projet_create_or_liste/', ProjetCreateOrListe.as_view(), name='affecte_programme_indicateur'),
+    path('projet_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteProjet.as_view(), name='affecte_programme_indicateur'),
+    # fin des url pour les ouscomposante
 ]
 
 # Username superuser: Djiamil

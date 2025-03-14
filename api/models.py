@@ -198,12 +198,43 @@ class ProgrammeIndicateur(models.Model):
 
     def __str__(self):
         return f"{self.programme} - {self.indicateur}"
-
-
+# Model pour enregistres les composante
+class Composante(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=255, unique=True)
+    programme = models.ForeignKey(Programme, on_delete=models.SET_NULL, null=True, blank=True)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
 
+    def __str__(self):
+        return self.libelle
+
+# Model pour enregistre les sous composante
+class SousComposante(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=255, unique=True)
+    composante = models.ForeignKey(Composante, on_delete=models.SET_NULL, null=True, blank=True)
     
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    def __str__(self):
+        return self.libelle
+
+# Model pour enregistre les projet
+class Projet(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    libelle = models.CharField(max_length=255, unique=True)
+    sigle = models.CharField(max_length=50, unique=True)
+    date_entree_en_vigueur = models.DateField()
+    date_demarrage_prevu = models.DateField()
+    date_fin_prevu = models.DateField()
+    cout_estime = models.DecimalField(max_digits=10, decimal_places=2)
+    programme = models.ForeignKey(Programme, on_delete=models.SET_NULL, null=True, blank=True)
+    composante = models.ForeignKey(Composante, on_delete=models.SET_NULL, null=True, blank=True)
+    sous_composante = models.ForeignKey(SousComposante, on_delete=models.SET_NULL, null=True, blank=True)
 
 
-
-    
+    def __str__(self):
+        return self.libelle

@@ -102,3 +102,35 @@ class ConfiguirationIndicateurSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProgrammeIndicateur
         fields = '__all__'
+class ComposanteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Composante
+        fields = '__all__'
+class GetComposanteSerializer(serializers.ModelSerializer):
+    programme = ProgrammeSerializer()
+    class Meta:
+        model = Composante
+        fields = '__all__'
+
+class SousComposanteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SousComposante
+        fields = '__all__'
+        
+class GetSousComposanteSerializer(serializers.ModelSerializer):
+    composante = ComposanteSerializer()
+    class Meta:
+        model = SousComposante
+        fields = '__all__'
+class ProjetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Projet
+        fields = '__all__'
+
+class GetProjetSerializer(serializers.ModelSerializer):
+    sous_composante = SousComposanteSerializer()
+    composante = ComposanteSerializer()
+    programme = ProgrammeSerializer()
+    class Meta:
+        model = Projet
+        fields = '__all__'
