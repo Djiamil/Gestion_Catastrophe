@@ -113,6 +113,48 @@ class GetUpdateOrDeleteProjet(generics.ListCreateAPIView):
             return Response({"data" : None, "message" : "Aucun Projet trouver" , "code" : 404 , "success" : False}, status=status.HTTP_404_NOT_FOUND)
         projet.delete()
         return Response({"data" : None, "message" : "Projet a ete supprimer sucées" , "code" : 201 , "success" : True}, status=status.HTTP_201_CREATED)
+    
+# Vas retourner les projet par filtre programme composante sous composante
+class FiltreByProgrammeComposanteSousComposante(generics.ListAPIView):
+    serializer_class = ProjetSerializer
+    queryset = Projet.objects.all()
 
+    def post(self, request, *args, **kwargs):
+        programme_slug = request.data.get("programme_slug")
+        composante_slug = request.data.get("composante_slug")
+        souscomposante_slug = request.data.get("souscomposante_slug")
+
+        projets = []
+
+        if programme_slug:
+            projet_programme = Projet.objects.filter(programme__slug=programme_slug)
+            projets.extend(projet_programme)  # ajoute les projets sans créer de liste dans liste
+
+        if composante_slug:
+            projet_composante = Projet.objects.filter(composante__slug=composante_slug)
+            projets.extend(projet_composante)
+
+        if souscomposante_slug:
+            projet_souscomposante = Projet.objects.filter(sous_composante__slug=souscomposante_slug)
+            projets.extend(projet_souscomposante)
+
+        # Suppression des doublons (au cas où un projet apparaitrait dans plusieurs filtres)
+        projets_uniques = list(set(projets))
+
+        # Ajout de la pagination
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        result_page = paginator.paginate_queryset(projets_uniques, request)
+
+        serializers = ProjetSerializer(result_page, many=True)
+
+        paginated_response = paginator.get_paginated_response(serializers.data)
+
+        return Response({
+            "data": paginated_response.data,
+            "message": "Liste des projets filtrés",
+            "success": True,
+            "code": 200
+        }, status=status.HTTP_200_OK)
         
         

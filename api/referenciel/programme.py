@@ -79,5 +79,27 @@ class GetUpdateOrDeleteProgramme(generics.ListCreateAPIView):
         programme.delete()
         return Response({"data" : None, "message" : "Programme a ete supprimer sucées" , "code" : 201 , "success" : True}, status=status.HTTP_201_CREATED)
 
-        
-        
+# Va recevoir le slug du programe et liste ses composantes
+class showComponsateByProgramme(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ComposanteSerializer
+    queryset = Composante.objects.all()
+    def get(self, request, *args, **kwargs):
+        slug_programme = kwargs.get('slug')
+        composante = Composante.objects.filter(programme__slug=slug_programme)
+        # Ajout de la pagination
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        result_page = paginator.paginate_queryset(composante, request)
+        serializers = ComposanteSerializer(result_page, many=True)
+        # Construire la réponse paginée sans utiliser le paramètre `status`
+        paginated_response = paginator.get_paginated_response(serializers.data)
+        # Retourner une réponse personnalisée avec le statut HTTP
+        return Response({
+            "data": paginated_response.data,
+            "message": "Liste des composantes d'un programme",
+            "success": True,
+            "code": 200
+        }, status=status.HTTP_200_OK)
+
+            

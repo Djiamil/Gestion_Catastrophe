@@ -56,6 +56,7 @@ urlpatterns = [
     # debu des route pour programme
     path('programme_create_or_liste/', ProgrammeCreateOrListe.as_view(), name='programme_create_or_liste'),
     path('programme_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteProgramme.as_view(), name='programme_getOn_update_delete'),
+    path('programme_composante/<slug:slug>/', showComponsateByProgramme.as_view(), name='programme_composante'),
     # fin des route pour programme
     # Les endPoint qui tourne au tour du programme et de l'indicateur
     path('affect_programme_indicateur/', ProgrammeIndicateurCreateOrListe.as_view(), name='affecte_programme_indicateur'),
@@ -64,6 +65,7 @@ urlpatterns = [
     # debut des url pour les composante
     path('composante_create_or_liste/', ComposanteCreateOrListe.as_view(), name='affecte_programme_indicateur'),
     path('composante_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteComposante.as_view(), name='affecte_programme_indicateur'),
+    path('sous_composante_composante/<slug:slug>/', showSous_ComposanteByProgramme.as_view(), name='sous_composante_composante'),
     # fin des url pour les composante
      # debut des url pour les souscomposante
     path('sous_composante_create_or_liste/', SousComposanteCreateOrListe.as_view(), name='affecte_programme_indicateur'),
@@ -72,6 +74,7 @@ urlpatterns = [
     # debut des url pour les souscomposante
     path('projet_create_or_liste/', ProjetCreateOrListe.as_view(), name='affecte_programme_indicateur'),
     path('projet_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteProjet.as_view(), name='affecte_programme_indicateur'),
+    path('projet_filter/', FiltreByProgrammeComposanteSousComposante.as_view(), name='projet_filter'),
     # fin des url pour les ouscomposante
 ]
 

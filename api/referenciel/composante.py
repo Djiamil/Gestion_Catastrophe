@@ -78,6 +78,28 @@ class GetUpdateOrDeleteComposante(generics.ListCreateAPIView):
             return Response({"data" : None, "message" : "Aucun Composante trouver" , "code" : 404 , "success" : False}, status=status.HTTP_404_NOT_FOUND)
         composante.delete()
         return Response({"data" : None, "message" : "Composante a ete supprimer sucées" , "code" : 201 , "success" : True}, status=status.HTTP_201_CREATED)
+# Va recevoir le slug du composante et liste ses sous composant
+class showSous_ComposanteByProgramme(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = SousComposanteSerializer
+    queryset = SousComposante.objects.all()
+    def get(self, request, *args, **kwargs):
+        slug_composante = kwargs.get('slug')
+        sous_composante = SousComposante.objects.filter(composante__slug=slug_composante)
+        # Ajout de la pagination
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        result_page = paginator.paginate_queryset(sous_composante, request)
+        serializers = SousComposanteSerializer(result_page, many=True)
+        # Construire la réponse paginée sans utiliser le paramètre `status`
+        paginated_response = paginator.get_paginated_response(serializers.data)
+        # Retourner une réponse personnalisée avec le statut HTTP
+        return Response({
+            "data": paginated_response.data,
+            "message": "Liste des sous composantes d'une composante",
+            "success": True,
+            "code": 200
+        }, status=status.HTTP_200_OK)
 
         
         
