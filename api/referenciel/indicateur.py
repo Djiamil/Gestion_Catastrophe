@@ -23,7 +23,7 @@ class IndicateurCreateOrListe(generics.CreateAPIView):
         paginator.page_size = 10
         result_page = paginator.paginate_queryset(indicateur, request)
         
-        serializers = IndicateurSerializer(result_page, many=True)
+        serializers = GetIndicateurSerializer(result_page, many=True)
         # Construire la réponse paginée sans utiliser le paramètre `status`
         paginated_response = paginator.get_paginated_response(serializers.data)
         # Retourner une réponse personnalisée avec le statut HTTP

@@ -70,7 +70,7 @@ class GetUpdateOrDeleteBailleur(generics.ListCreateAPIView):
             bailleur = Bailleur.objects.get(slug=slug)
         except Bailleur.DoesNotExist:
             return Response({"data" : None, "message" : "Aucun Bailleur trouver" , "code" : 404 , "success" : False}, status=status.HTTP_404_NOT_FOUND)
-        Bailleur.delete()
+        bailleur.delete()
         return Response({"data" : None, "message" : "Bailleur a ete supprimer sucées" , "code" : 201 , "success" : True}, status=status.HTTP_201_CREATED)
 
         

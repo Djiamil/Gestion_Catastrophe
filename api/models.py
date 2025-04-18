@@ -183,11 +183,19 @@ class Programme(models.Model):
         return self.libelle
 # Ce model vas permetre de lier un programme a un indicateur avec la possiblité d'un many to many
 class ProgrammeIndicateur(models.Model):
+    PERIODICITE_CHOICES = [
+        ('journalier', 'Journalier'),
+        ('hebdomadaire', 'Hebdomadaire'),
+        ('mensuel', 'Mensuel'),
+        ('trimestriel', 'Trimestriel'),
+        ('semestriel', 'Semestriel'),
+        ('annuel', 'Annuel'),
+    ]
     slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
     indicateur = models.ForeignKey('Indicateur', on_delete=models.CASCADE, null=False)
     programme = models.ForeignKey('Programme', on_delete=models.CASCADE, null=False)
-
+    periodicite = models.CharField(max_length=20, choices=PERIODICITE_CHOICES, default='mensuel')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -238,3 +246,17 @@ class Projet(models.Model):
 
     def __str__(self):
         return self.libelle
+# Model pour enregistre les valeurs collecter
+class Collecte(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    indicateur = models.ForeignKey('Indicateur', on_delete=models.CASCADE)
+    valeur = models.FloatField(null=True, blank=True)  # <- rendre nullable
+    valeur_prevu = models.FloatField(null=True, blank=True)
+    date_collecte = models.DateField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    date_debut = models.DateTimeField(auto_now_add=True)
+    date_fin = models.DateTimeField(null=True, blank=True)
+    periode_label = models.CharField(max_length=50, null=True, blank=True)  # <- nouveau champ
+
+    def __str__(self):
+        return self.valeur

@@ -75,6 +75,19 @@ class GetUpdateOrDeleteRegion(generics.ListCreateAPIView):
 
         
 
-            
+# lister tous les region pour les ajoue 
+class RegionAll(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = RegionSerializer
+    queryset = Region.objects.all()
+    def get(self, request, *args, **kwargs):
+        region = Region.objects.all()
+        serializer = RegionSerializer(region, many=True)
+        return Response({
+            "data": serializer.data,
+            "message": "Liste des Indicateurs",
+            "success": True,
+            "code": 200
+        }, status=status.HTTP_200_OK)
         
 

@@ -13,6 +13,7 @@ from api.referenciel.configuireIndicateur import *
 from api.referenciel.composante import *
 from api.referenciel.sousComposante import *
 from api.referenciel.projet import *
+from api.Collecte import *
 
 urlpatterns = [
     # Debu des endPointe des fonction qui sont dans views 
@@ -24,10 +25,12 @@ urlpatterns = [
     # DEBUT Url qui ourne au toure des region
     path('region_create_or_liste/', RegionCreateOrListe.as_view(), name='region_create_or_liste'),
     path('region_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteRegion.as_view(), name='region_getOn_update_delete'),
+    path('region_all/', RegionAll.as_view(), name='region_all'),
     # FIN url qui tourne au toure des region  
     # Debut route qui tourne au toure du departement 
     path('departement_create_or_liste/', DepartementCreateOrListe.as_view(), name='departement_create_or_liste'),
     path('departement_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteDepartement.as_view(), name='departement_getOn_update_delete'),
+    path('departement_all/', DepartementAll.as_view(), name='departement_all'),
     # Fin des route qui tourne autoure du departement
     # Deut des routes qui tourne au toure de la commune
     path('commune_create_or_liste/', CommuneCreateOrListe.as_view(), name='commune_create_or_liste'),
@@ -61,6 +64,8 @@ urlpatterns = [
     # Les endPoint qui tourne au tour du programme et de l'indicateur
     path('affect_programme_indicateur/', ProgrammeIndicateurCreateOrListe.as_view(), name='affecte_programme_indicateur'),
     path('configuire_programme_indicateur/<slug:slug>/', GetUpdateOrDeleteProgrammeIndicateur.as_view(), name='affecte_programme_indicateur'),
+    path('getOnConfiguiration/<slug:slug>/', GetOnConfiguiration.as_view(), name='get_on_configuiration'),
+    path('update_delete_configuiration/<slug:slug>/', updateConfiguiration.as_view(), name='update_delete_configuiration'),
     # fin es endPoint pour affecter un programme a un indicateur
     # debut des url pour les composante
     path('composante_create_or_liste/', ComposanteCreateOrListe.as_view(), name='affecte_programme_indicateur'),
@@ -76,6 +81,12 @@ urlpatterns = [
     path('projet_getOn_update_delete/<slug:slug>/', GetUpdateOrDeleteProjet.as_view(), name='affecte_programme_indicateur'),
     path('projet_filter/', FiltreByProgrammeComposanteSousComposante.as_view(), name='projet_filter'),
     # fin des url pour les ouscomposante
+    # Debut des routes pour les collectes
+    path('collecte_record/<slug:slug>/', CollectionValueRecord.as_view(), name='collecte_record'),
+    path('collecte_liste_by_indicateur/<slug:slug>/', GetCollecteForIndicateur.as_view(), name='collecte_liste'),
+    path("collecte_update/<slug:slug>/", CollecteUpdate.as_view(), name="collecte-update"),
+    path("purge_collectes/", DeleteAllCollecte.as_view(), name="collecte-delete"),
+    # Fin des routes pour les collectes  
 ]
 
 # Username superuser: Djiamil

@@ -10,7 +10,7 @@ from rest_framework.pagination import PageNumberPagination
 # views pour enregistre une departement
 class DepartementCreateOrListe(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = DepartementSerializer
+    serializer_class = GetDepartementSerializer
     queryset = Departement.objects.all()
     def get(self, request, *args ,**kwargs):
         departement = Departement.objects.all().order_by('-created_at')
@@ -18,7 +18,7 @@ class DepartementCreateOrListe(generics.CreateAPIView):
         paginator = PageNumberPagination()
         paginator.page_size = 10
         result_page = paginator.paginate_queryset(departement, request)
-        serializers = DepartementSerializer(result_page, many=True)
+        serializers = GetDepartementSerializer(result_page, many=True)
         # Construire la réponse paginée sans utiliser le paramètre `status`
         paginated_response = paginator.get_paginated_response(serializers.data)
         # Retourner une réponse personnalisée avec le statut HTTP
@@ -79,7 +79,19 @@ class GetUpdateOrDeleteDepartement(generics.ListCreateAPIView):
         departement.delete()
         return Response({"data" : None, "message" : "Departement a ete supprimer sucées" , "code" : 201 , "success" : True}, status=status.HTTP_201_CREATED)
 
-        
+class DepartementAll(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = DepartementSerializer
+    queryset = Departement.objects.all()
+    def get(self, request, *args, **kwargs):
+        departement = Departement.objects.all()
+        serializer = DepartementSerializer(departement, many=True)
+        return Response({
+            "data": serializer.data,
+            "message": "Liste des departement",
+            "success": True,
+            "code": 200
+        }, status=status.HTTP_200_OK)
         
 
             

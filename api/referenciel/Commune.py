@@ -10,7 +10,7 @@ from rest_framework.pagination import PageNumberPagination
 # views pour enregistre une commune
 class CommuneCreateOrListe(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = CommuneSerializer
+    serializer_class = GetCommuneSerializer
     queryset = Commune.objects.all()
     def get(self, request, *args ,**kwargs):
         commune = Commune.objects.all().order_by('-created_at')
@@ -18,7 +18,7 @@ class CommuneCreateOrListe(generics.CreateAPIView):
         paginator = PageNumberPagination()
         paginator.page_size = 10
         result_page = paginator.paginate_queryset(commune, request)
-        serializers = CommuneSerializer(result_page, many=True)
+        serializers = GetCommuneSerializer(result_page, many=True)
         # Construire la réponse paginée sans utiliser le paramètre `status`
         paginated_response = paginator.get_paginated_response(serializers.data)
         # Retourner une réponse personnalisée avec le statut HTTP

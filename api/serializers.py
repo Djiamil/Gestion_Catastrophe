@@ -43,7 +43,17 @@ class DepartementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Departement
         fields = '__all__'
+class GetDepartementSerializer(serializers.ModelSerializer):
+    region = RegionSerializer()
+    class Meta:
+        model = Departement
+        fields = '__all__'
 class CommuneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Commune
+        fields = '__all__'
+class GetCommuneSerializer(serializers.ModelSerializer):
+    departement = DepartementSerializer()
     class Meta:
         model = Commune
         fields = '__all__'
@@ -80,6 +90,12 @@ class IndicateurSerializer(serializers.ModelSerializer):
     class Meta:
         model = Indicateur
         fields = '__all__'
+class GetIndicateurSerializer(serializers.ModelSerializer):
+    type_indicateur = TypeDindicateurSerializer()
+    unite_mesure = UniteMesureSerializer()
+    class Meta:
+        model = Indicateur
+        fields = '__all__'
 class ProgrammeSerializer(serializers.ModelSerializer):
     date_debut = serializers.SerializerMethodField()
     date_fin = serializers.SerializerMethodField()
@@ -99,6 +115,12 @@ class GetProgrammeSerializer(serializers.ModelSerializer):
         model = Programme
         fields = '__all__'
 class ConfiguirationIndicateurSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProgrammeIndicateur
+        fields = '__all__'
+class GetConfiguirationIndicateurSerializer(serializers.ModelSerializer):
+    indicateur = IndicateurSerializer()
+    programme = ProgrammeSerializer()
     class Meta:
         model = ProgrammeIndicateur
         fields = '__all__'
@@ -133,4 +155,15 @@ class GetProjetSerializer(serializers.ModelSerializer):
     programme = ProgrammeSerializer()
     class Meta:
         model = Projet
+        fields = '__all__'
+
+
+class CollecteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Collecte
+        fields = '__all__'
+class GetCollecteSerializer(serializers.ModelSerializer):
+    indicateur = IndicateurSerializer()
+    class Meta:
+        model = Collecte
         fields = '__all__'
