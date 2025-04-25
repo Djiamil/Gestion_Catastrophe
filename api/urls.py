@@ -14,6 +14,9 @@ from api.referenciel.composante import *
 from api.referenciel.sousComposante import *
 from api.referenciel.projet import *
 from api.Collecte import *
+from api.fiche_de_collecte.configuiration import *
+from api.fiche_de_collecte.donnee import *
+from api.fiche_de_collecte.valeur import *
 
 urlpatterns = [
     # Debu des endPointe des fonction qui sont dans views 
@@ -87,6 +90,12 @@ urlpatterns = [
     path("collecte_update/<slug:slug>/", CollecteUpdate.as_view(), name="collecte-update"),
     path("purge_collectes/", DeleteAllCollecte.as_view(), name="collecte-delete"),
     # Fin des routes pour les collectes  
+    # Debut des routes pour les fiches de collectes
+    path('fiche_de_collecte_configuirations/', FicheDeCollecteConfiguiration.as_view(), name='fiche_de_collecte_configuirations'),
+    path('fiche_de_collecte_donnees/', FicheDeCollecteDonnees.as_view(), name='fiche_de_collecte_configuirations'),
+    path('fiche_de_collecte_valeurs/', FicheDeCollecteValeurs.as_view(), name='fiche_de_collecte_valeurs'),
+    path('fiche_de_collecte_valeur//<slug:slug>/', FicheDeCollecteValeurAdd.as_view(), name='fiche_de_collecte_valeurs_add'),
+    # Fin des routes pour les fiches de collectes
 ]
 
 # Username superuser: Djiamil

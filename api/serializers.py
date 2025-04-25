@@ -167,3 +167,32 @@ class GetCollecteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collecte
         fields = '__all__'
+
+
+class FicheCollecteConfigurationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FicheCollecteConfiguration
+        fields = '__all__'
+        
+class FicheCollecteDonneeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FicheCollecteDonnee
+        fields = '__all__'
+class GetFicheCollecteDonneeSerializer(serializers.ModelSerializer):
+    configuration = FicheCollecteConfigurationSerializer()
+    class Meta:
+        model : FicheCollecteDonnee
+        fields = '__all__'
+
+class FicheCollecteValeurSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FicheCollecteValeur
+        fields = '__all__'
+class GetFicheCollecteValeurSerializer(serializers.ModelSerializer):
+    region = RegionSerializer()
+    departement = DepartementSerializer()
+    commune = CommuneSerializer()
+    donnee = FicheCollecteDonneeSerializer()
+    class Meta:
+        model = FicheCollecteValeur
+        fields = '__all__'

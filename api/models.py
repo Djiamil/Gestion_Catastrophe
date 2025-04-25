@@ -260,3 +260,45 @@ class Collecte(models.Model):
 
     def __str__(self):
         return self.valeur
+
+# Model pour configuirer un fiche de collecte 
+class FicheCollecteConfiguration(models.Model):
+    NIVEAU_CHOIX = [
+        ('region', 'Région'),
+        ('departement', 'Département'),
+        ('commune', 'Commune'),
+    ]
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    niveau = models.CharField(max_length=20, choices=NIVEAU_CHOIX)
+    libelle = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.libelle} - {self.get_niveau_display()}"
+
+# Fiche de collecte pour les données a suivre
+class FicheCollecteDonnee(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    configuration = models.ForeignKey(FicheCollecteConfiguration, on_delete=models.CASCADE, related_name='donnees')
+    libelle = models.CharField(max_length=100)
+    unite_mesure = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.libelle
+    
+# Les valeur collecté pour un fiche de collecte
+class FicheCollecteValeur(models.Model):
+    slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    donnee = models.ForeignKey(FicheCollecteDonnee, on_delete=models.CASCADE, related_name='valeurs')
+    valeur = models.FloatField(null=True, blank=True)
+    
+    # Champs dynamiques selon le niveau de découpage
+    region = models.ForeignKey(Region, on_delete=models.CASCADE, null=True, blank=True)
+    departement = models.ForeignKey(Departement, on_delete=models.CASCADE, null=True, blank=True)
+    commune = models.ForeignKey(Commune, on_delete=models.CASCADE, null=True, blank=True)
+    
+    date_collecte = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.donnee.libelle} : {self.valeur}"
