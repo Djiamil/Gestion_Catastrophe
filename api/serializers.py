@@ -181,7 +181,7 @@ class FicheCollecteDonneeSerializer(serializers.ModelSerializer):
 class GetFicheCollecteDonneeSerializer(serializers.ModelSerializer):
     configuration = FicheCollecteConfigurationSerializer()
     class Meta:
-        model : FicheCollecteDonnee
+        model = FicheCollecteDonnee
         fields = '__all__'
 
 class FicheCollecteValeurSerializer(serializers.ModelSerializer):

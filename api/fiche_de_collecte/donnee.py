@@ -11,7 +11,7 @@ class FicheDeCollecteDonnees(generics.CreateAPIView):
     serializer_class = FicheCollecteDonneeSerializer
     queryset = FicheCollecteDonnee.objects.all()
     def get(self, request, *args ,**kwargs):
-        ficheCollecteDonnee = FicheCollecteValeur.objects.all().order_by('-created_at')
+        ficheCollecteDonnee = FicheCollecteDonnee.objects.all().order_by('-created_at')
         # Ajout de la pagination
         paginator = PageNumberPagination()
         paginator.page_size = 10

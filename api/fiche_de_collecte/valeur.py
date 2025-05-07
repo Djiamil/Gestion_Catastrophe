@@ -29,6 +29,28 @@ class FicheDeCollecteValeurAdd(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = FicheCollecteValeurSerializer
     queryset = FicheCollecteDonnee.objects.all()
+    def get(self, request, *args ,**kwargs):
+        slug = kwargs.get("slug")
+        try:
+            valeur_donnees_collecte = FicheCollecteValeur.objects.filter(donnee__slug=slug).order_by('-date_collecte')
+        except FicheCollecteValeur.DoesNotExist:
+            return Response({"data" : None, "message" : "Aucun valeur de collecte trouver", "code" : 404, "status" : True}, status=status.HTTP_404_NOT_FOUND)
+                # Ajout de la pagination
+        paginator = PageNumberPagination()
+        paginator.page_size = 10
+        result_page = paginator.paginate_queryset(valeur_donnees_collecte, request)
+        serializers = GetFicheCollecteValeurSerializer(result_page, many=True)
+        # Construire la réponse paginée sans utiliser le paramètre `status`
+        paginated_response = paginator.get_paginated_response(serializers.data)
+        # Retourner une réponse personnalisée avec le statut HTTP 
+        niveau_configuiration = valeur_donnees_collecte = FicheCollecteValeur.objects.filter(donnee__slug=slug).first()
+        return Response({
+            "data": paginated_response.data,
+            "niveau_config" : FicheCollecteConfigurationSerializer(niveau_configuiration.donnee.configuration).data,
+            "message": "Liste des valeur de collecter",
+            "success": True,
+            "code": 200
+        }, status=status.HTTP_200_OK)
     def put(self, request, *args ,**kwargs):
         slug = kwargs.get("slug")
         valeur = request.data.get("valeur")

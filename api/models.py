@@ -257,6 +257,7 @@ class Collecte(models.Model):
     date_debut = models.DateTimeField(auto_now_add=True)
     date_fin = models.DateTimeField(null=True, blank=True)
     periode_label = models.CharField(max_length=50, null=True, blank=True)  # <- nouveau champ
+    periode = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.valeur
@@ -299,6 +300,7 @@ class FicheCollecteValeur(models.Model):
     commune = models.ForeignKey(Commune, on_delete=models.CASCADE, null=True, blank=True)
     
     date_collecte = models.DateField(auto_now_add=True)
+    periode = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.donnee.libelle} : {self.valeur}"

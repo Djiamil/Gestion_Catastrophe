@@ -94,10 +94,9 @@ urlpatterns = [
     path('fiche_de_collecte_configuirations/', FicheDeCollecteConfiguiration.as_view(), name='fiche_de_collecte_configuirations'),
     path('fiche_de_collecte_donnees/', FicheDeCollecteDonnees.as_view(), name='fiche_de_collecte_configuirations'),
     path('fiche_de_collecte_valeurs/', FicheDeCollecteValeurs.as_view(), name='fiche_de_collecte_valeurs'),
-    path('fiche_de_collecte_valeur//<slug:slug>/', FicheDeCollecteValeurAdd.as_view(), name='fiche_de_collecte_valeurs_add'),
+    path('fiche_de_collecte_valeur/<slug:slug>/', FicheDeCollecteValeurAdd.as_view(), name='fiche_de_collecte_valeurs_add_liste'),
     # Fin des routes pour les fiches de collectes
 ]
-
 # Username superuser: Djiamil
 # Email address: djiamil@gmail.com
 # Password: Passer123!
