@@ -159,6 +159,7 @@ class CollecteUpdate(generics.UpdateAPIView):
         slug = kwargs.get("slug")
         valeur = request.data.get("valeur")
         valeur_prevu = request.data.get("valeur_prevu")
+        periode = request.data.get("periode")
 
         try:
             collecte = Collecte.objects.get(slug=slug)
@@ -169,9 +170,17 @@ class CollecteUpdate(generics.UpdateAPIView):
                 "success": False,
                 "code": 404
             }, status=status.HTTP_404_NOT_FOUND)
-
+        valeur = float(valeur)
+        if collecte.valeur_prevu and valeur > collecte.valeur_prevu:
+            return Response({
+                "data": None,
+                "message": f"La valeur réelle ne peut pas dépasser la valeur prévue qui est {collecte.valeur_prevu}",
+                "success": False,
+                "code": 404
+            }, status=status.HTTP_404_NOT_FOUND)
         collecte.valeur = valeur
         collecte.valeur_prevu = valeur_prevu
+        collecte.periode = periode
         collecte.save()
 
         serializer = self.get_serializer(collecte)

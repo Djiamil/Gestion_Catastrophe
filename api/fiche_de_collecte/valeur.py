@@ -54,11 +54,13 @@ class FicheDeCollecteValeurAdd(generics.CreateAPIView):
     def put(self, request, *args ,**kwargs):
         slug = kwargs.get("slug")
         valeur = request.data.get("valeur")
+        periode = request.data.get("periode")
         try:
             fiche_collecte_valeur = FicheCollecteValeur.objects.get(slug=slug)
         except FicheCollecteValeur.DoesNotExist:
             return Response({"data" : None, "message" : "Aucun valeur de collecte trouver", "code" : 404, "status" : True}, status=status.HTTP_404_NOT_FOUND)
         fiche_collecte_valeur.valeur = valeur
+        fiche_collecte_valeur.periode = periode
         fiche_collecte_valeur.save()
         serializer = FicheCollecteValeurSerializer(fiche_collecte_valeur)
         return Response({
