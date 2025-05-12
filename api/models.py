@@ -250,13 +250,13 @@ class Projet(models.Model):
 class Collecte(models.Model):
     slug = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     indicateur = models.ForeignKey('Indicateur', on_delete=models.CASCADE)
-    valeur = models.FloatField(null=True, blank=True)  # <- rendre nullable
+    valeur = models.FloatField(null=True, blank=True)
     valeur_prevu = models.FloatField(null=True, blank=True)
     date_collecte = models.DateField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     date_debut = models.DateTimeField(auto_now_add=True)
     date_fin = models.DateTimeField(null=True, blank=True)
-    periode_label = models.CharField(max_length=50, null=True, blank=True)  # <- nouveau champ
+    periode_label = models.CharField(max_length=50, null=True, blank=True)
     periode = models.IntegerField(null=True, blank=True)
 
     def __str__(self):

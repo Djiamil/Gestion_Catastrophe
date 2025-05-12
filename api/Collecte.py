@@ -9,6 +9,9 @@ from django.utils.timezone import make_aware
 from rest_framework.views import APIView
 from datetime import datetime, timedelta
 import locale
+from collections import defaultdict
+
+
 
 
 
@@ -18,6 +21,7 @@ import locale
 
 # Views pour ajouter une valeurs par periode
 class CollectionValueRecord(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = CollecteSerializer
     queryset = Collecte.objects.all()
 
@@ -102,6 +106,7 @@ class GetCollecteForIndicateur(APIView):
     def post(self, request, *args, **kwargs):
         indicateur_slug = kwargs.get("slug")
         programme_slug = request.data.get("programme_slug")
+        periode = request.data.get("periode")
 
         # Récupération de la configuration de l'indicateur
         try:
@@ -129,7 +134,11 @@ class GetCollecteForIndicateur(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         # Récupération des collectes associées
-        collectes = Collecte.objects.filter(indicateur=indicateur).order_by('date_debut')
+        collectes = Collecte.objects.filter(indicateur=indicateur, periode=periode).order_by('date_debut')
+
+        if not collectes.exists():
+            generer_collectes_pour_annee(indicateur, programme_indicateur.periodicite, periode)
+            collectes = Collecte.objects.filter(indicateur=indicateur, periode=periode).order_by('date_debut')
 
         # Pagination
         paginator = PageNumberPagination()
@@ -199,7 +208,7 @@ class DeleteAllCollecte(APIView):
         Collecte.objects.all().delete()
         return Response({'message': 'Toutes les collectes ont été supprimées.'})
     
-def generer_collectes_pour_annee(indicateur, periodicite, annee=datetime.now().year):
+def generer_collectes_pour_annee(indicateur, periodicite, periode=None, annee=datetime.now().year):
     collectes = []
 
     if periodicite == "Journalier":
@@ -213,7 +222,8 @@ def generer_collectes_pour_annee(indicateur, periodicite, annee=datetime.now().y
                 valeur=None,
                 date_debut=debut,
                 date_fin=fin,
-                periode_label=label
+                periode_label=label,
+                periode = periode
             ))
             current += timedelta(days=1)
 
@@ -230,7 +240,8 @@ def generer_collectes_pour_annee(indicateur, periodicite, annee=datetime.now().y
                 valeur=None,
                 date_debut=make_aware(debut),
                 date_fin=make_aware(fin),
-                periode_label=f"Semaine {week_number}"
+                periode_label=f"Semaine {week_number}",
+                periode = periode
             ))
             current += timedelta(weeks=1)
             week_number += 1
@@ -254,7 +265,8 @@ def generer_collectes_pour_annee(indicateur, periodicite, annee=datetime.now().y
                 valeur=None,
                 date_debut=make_aware(debut),
                 date_fin=make_aware(fin),
-                periode_label=label
+                periode_label=label,
+                periode = periode
             ))
     elif periodicite == "Trimestriel":
         trimestres = [
@@ -269,7 +281,8 @@ def generer_collectes_pour_annee(indicateur, periodicite, annee=datetime.now().y
                 valeur=None,
                 date_debut=make_aware(debut),
                 date_fin=make_aware(fin),
-                periode_label=label
+                periode_label=label,
+                periode = periode
             ))
 
     elif periodicite == "Semestriel":
@@ -283,7 +296,8 @@ def generer_collectes_pour_annee(indicateur, periodicite, annee=datetime.now().y
                 valeur=None,
                 date_debut=make_aware(debut),
                 date_fin=make_aware(fin),
-                periode_label=label
+                periode_label=label,
+                periode = periode
             ))
 
     elif periodicite == "Annuel":
@@ -294,7 +308,8 @@ def generer_collectes_pour_annee(indicateur, periodicite, annee=datetime.now().y
             valeur=None,
             date_debut=make_aware(debut),
             date_fin=make_aware(fin),
-            periode_label=f"Année {annee}"
+            periode_label=f"Année {annee}",
+            periode = periode
         ))
 
     else:
@@ -302,3 +317,59 @@ def generer_collectes_pour_annee(indicateur, periodicite, annee=datetime.now().y
 
     # ✅ Sauvegarde en bulk pour optimiser
     Collecte.objects.bulk_create(collectes)
+
+# views pour les stats des collecte d'un indicateur par periode exemple 2023, 2024 ...
+class StatsCollecteForPeriod(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CollecteSerializer
+    queryset = Collecte.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        indicateur_slug = kwargs.get('slug')
+        print("le slug de l'indicateur", indicateur_slug)
+        try:
+            indicateur = Indicateur.objects.get(slug=indicateur_slug)
+        except Indicateur.DoesNotExist:
+            return Response({
+                "data": None,
+                "message": "Aucun indicateur trouver",
+                "success": False,
+                "code": 404
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        try:
+            collectes = Collecte.objects.filter(indicateur=indicateur)
+        except Collecte.DoesNotExist:
+            return Response({
+                "data": None,
+                "message": "Aucun collecte trouvé",
+                "success": False,
+                "code": 404
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        # Dictionnaire pour stocker les totaux par période
+        total_par_periode = defaultdict(float)
+
+        for collecte in collectes:
+            if collecte.valeur is not None:
+                total_par_periode[collecte.periode] += float(collecte.valeur)
+
+        # Formatage des résultats
+        data = [
+            {
+                "periode": periode,
+                "total": total
+            }
+            for periode, total in total_par_periode.items()
+        ]
+
+        return Response({
+            "data": data,
+            "message": "Total des collectes par période récupéré avec succès",
+            "success": True,
+            "code": 200
+        }, status=status.HTTP_200_OK)
+         
+        
+
+    

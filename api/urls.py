@@ -89,6 +89,8 @@ urlpatterns = [
     path('collecte_liste_by_indicateur/<slug:slug>/', GetCollecteForIndicateur.as_view(), name='collecte_liste'),
     path("collecte_update/<slug:slug>/", CollecteUpdate.as_view(), name="collecte-update"),
     path("purge_collectes/", DeleteAllCollecte.as_view(), name="collecte-delete"),
+    path("collecte_state_periode/<slug:slug>/", StatsCollecteForPeriod.as_view(), name="collecte_state_for_periode"),
+    
     # Fin des routes pour les collectes  
     # Debut des routes pour les fiches de collectes
     path('fiche_de_collecte_configuirations/', FicheDeCollecteConfiguiration.as_view(), name='fiche_de_collecte_configuirations'),

@@ -25,6 +25,7 @@ class DepartementCreateOrListe(generics.CreateAPIView):
     
 # viewspour modifier suprimer ou lister une departement par son slug
 class GetUpdateOrDeleteDepartement(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     serializer_class = DepartementSerializer
     queryset = Departement.objects.all()
     def get(self, request, *args, **kwargs):

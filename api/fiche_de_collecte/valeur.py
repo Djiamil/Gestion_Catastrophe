@@ -29,13 +29,27 @@ class FicheDeCollecteValeurAdd(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = FicheCollecteValeurSerializer
     queryset = FicheCollecteDonnee.objects.all()
-    def get(self, request, *args ,**kwargs):
+    def post(self, request, *args ,**kwargs):
         slug = kwargs.get("slug")
+        periode = request.data.get("periode")
         try:
-            valeur_donnees_collecte = FicheCollecteValeur.objects.filter(donnee__slug=slug).order_by('-date_collecte')
+            valeur_donnees_collecte = FicheCollecteValeur.objects.filter(donnee__slug=slug,periode=periode).order_by('-date_collecte')
         except FicheCollecteValeur.DoesNotExist:
             return Response({"data" : None, "message" : "Aucun valeur de collecte trouver", "code" : 404, "status" : True}, status=status.HTTP_404_NOT_FOUND)
-                # Ajout de la pagination
+        if not valeur_donnees_collecte.exists():
+            try:
+                donnee = FicheCollecteDonnee.objects.get(slug=slug)
+            except FicheCollecteDonnee.DoesNotExist:
+                return Response({
+                    "data": None,
+                    "message": "Fiche de collecte non trouvée.",
+                    "success": False,
+                    "code": 404
+                }, status=status.HTTP_404_NOT_FOUND)
+            pre_remplir_valeurs(donnee,periode)
+            valeur_donnees_collecte = FicheCollecteValeur.objects.filter(donnee__slug=slug,periode=periode).order_by('-date_collecte')
+
+        # Ajout de la pagination
         paginator = PageNumberPagination()
         paginator.page_size = 10
         result_page = paginator.paginate_queryset(valeur_donnees_collecte, request)
@@ -75,7 +89,7 @@ class FicheDeCollecteValeurAdd(generics.CreateAPIView):
 
 
 
-def pre_remplir_valeurs(donnee):
+def pre_remplir_valeurs(donnee,periode):
     configuration = donnee.configuration
     niveau = configuration.niveau
 
@@ -84,7 +98,8 @@ def pre_remplir_valeurs(donnee):
         for region in regions:
             FicheCollecteValeur.objects.create(
                 donnee=donnee,
-                region=region
+                region=region,
+                periode = periode
             )
 
     elif niveau == 'departement':
@@ -92,7 +107,8 @@ def pre_remplir_valeurs(donnee):
         for departement in departements:
             FicheCollecteValeur.objects.create(
                 donnee=donnee,
-                departement=departement
+                departement=departement,
+                periode = periode
             )
 
     elif niveau == 'commune':
@@ -100,5 +116,6 @@ def pre_remplir_valeurs(donnee):
         for commune in communes:
             FicheCollecteValeur.objects.create(
                 donnee=donnee,
-                commune=commune
+                commune=commune,
+                periode = periode
             )
