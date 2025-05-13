@@ -90,6 +90,7 @@ urlpatterns = [
     path("collecte_update/<slug:slug>/", CollecteUpdate.as_view(), name="collecte-update"),
     path("purge_collectes/", DeleteAllCollecte.as_view(), name="collecte-delete"),
     path("collecte_state_periode/<slug:slug>/", StatsCollecteForPeriod.as_view(), name="collecte_state_for_periode"),
+    path("collecte_state_periode_periodicite/<slug:slug>/", stateForCompareValeurValeurPrevu.as_view(), name="collecte_state_periode_periodicite"),
     
     # Fin des routes pour les collectes  
     # Debut des routes pour les fiches de collectes

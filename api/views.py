@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from .models import *
 from .serializers import *
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+
 
 
 class LoginView(generics.GenericAPIView):
@@ -84,3 +86,25 @@ class AddUser(generics.CreateAPIView):
                 {"data": None, "message": serializer.errors, "success": False, "code": 400},
                 status=status.HTTP_400_BAD_REQUEST
             )
+# Fonction pour compter le nombre de programme projet Indicateurteur fiche de collecte
+
+class CountNombre(APIView):
+    def get(self, request, *args, **kwargs):
+        nombreProgrammes = Programme.objects.count()
+        nombreProjets = Projet.objects.count()
+        nombreIndicateurs = Indicateur.objects.count()
+        nombreFiches = FicheCollecteConfiguration.objects.count()
+
+        data = {
+            "nombreProgrammes": nombreProgrammes,
+            "nombreProjets": nombreProjets,
+            "nombreIndicateurs": nombreIndicateurs,
+            "nombreFiches": nombreFiches
+        }
+
+        return Response({
+            "data": data,
+            "message": "Valeurs récupérées avec succès",
+            "success": True,
+            "code": 200
+        }, status=status.HTTP_200_OK)

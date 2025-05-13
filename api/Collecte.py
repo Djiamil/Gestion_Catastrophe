@@ -179,6 +179,8 @@ class CollecteUpdate(generics.UpdateAPIView):
                 "success": False,
                 "code": 404
             }, status=status.HTTP_404_NOT_FOUND)
+        if not valeur:
+            valeur = 0
         valeur = float(valeur)
         if collecte.valeur_prevu and valeur > collecte.valeur_prevu:
             return Response({
@@ -370,6 +372,43 @@ class StatsCollecteForPeriod(generics.ListAPIView):
             "code": 200
         }, status=status.HTTP_200_OK)
          
+         
+# Views pour retourner les données pour le graphe de comparaison des valeur réeel et prevue par periode
+class stateForCompareValeurValeurPrevu(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CollecteSerializer
+    queryset = Collecte.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        indicateur_slug = kwargs.get("slug")
+        periode = request.data.get("periode")  # ex: 2022
+
+        try:
+            indicateur = Indicateur.objects.get(slug=indicateur_slug)
+        except Indicateur.DoesNotExist:
+            return Response({
+                "data": None,
+                "message": "Aucun indicateur trouvé",
+                "success": False,
+                "code": 404
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        collectes = Collecte.objects.filter(indicateur=indicateur, periode=periode)
+
+        data = []
+        for collecte in collectes:
+            data.append({
+                "periode_label": collecte.periode_label,
+                "valeur": collecte.valeur,
+                "valeur_prevu": collecte.valeur_prevu
+            })
+
+        return Response({
+            "data": data,
+            "message": "Comparaison des valeurs récupérée avec succès",
+            "success": True,
+            "code": 200
+        }, status=status.HTTP_200_OK)
         
 
     
