@@ -257,7 +257,7 @@ class Collecte(models.Model):
     date_debut = models.DateTimeField(auto_now_add=True)
     date_fin = models.DateTimeField(null=True, blank=True)
     periode_label = models.CharField(max_length=50, null=True, blank=True)
-    periode = models.IntegerField(null=True, blank=True)
+    periode = models.IntegerField(null=True, blank=True)    
 
     def __str__(self):
         return self.valeur

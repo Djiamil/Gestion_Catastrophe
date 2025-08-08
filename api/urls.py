@@ -23,6 +23,7 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('role_create/', AddRole.as_view(), name='create_role'),
     path('user_create/', AddUser.as_view(), name='create_user'),
+    path('count_state/', CountNombre.as_view(), name='count_state'),
     # Fin des endpoint qui sont dans views
     
     # DEBUT Url qui ourne au toure des region
