@@ -140,6 +140,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
+    "http://bases.dufe2767.odns.fr",
 ]
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
